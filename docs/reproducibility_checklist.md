@@ -9,7 +9,7 @@
 - [x] Unit tests pass.
 - [x] Lint passes.
 - [x] Multi-seed variance reported.
-- [ ] GitHub release created.
-- [ ] Zenodo DOI minted.
-- [ ] DOI added to `CITATION.cff`.
+- [x] GitHub release created.
+- [x] Zenodo DOI minted.
+- [x] DOI added to `CITATION.cff`.
 - [ ] Note posted or submitted to original authors.
