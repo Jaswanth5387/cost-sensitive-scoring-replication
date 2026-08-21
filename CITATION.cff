@@ -4,8 +4,9 @@ title: "Cost-Sensitive Fraud Threshold Reconstruction"
 authors:
   - family-names: "codex"
     given-names: "jaswanth"
-version: 0.1.0
+version: 0.1.1
 date-released: 2026-08-21
+doi: 10.5281/zenodo.22043545
 license: MIT
 repository-code: "https://github.com/Jaswanth5387/cost-sensitive-scoring-replication"
 url: "https://github.com/Jaswanth5387/cost-sensitive-scoring-replication"
