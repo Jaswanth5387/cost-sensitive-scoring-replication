@@ -52,6 +52,12 @@ pytest
 ruff check .
 ```
 
+Or run the whole pipeline:
+
+```bash
+python scripts/run_all.py
+```
+
 If `data/raw/creditcard.csv` is missing, the experiment scripts fall back to a deterministic synthetic imbalanced dataset. The checked-in result uses the real Zenodo CSV.
 
 ## Files

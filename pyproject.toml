@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cost-sensitive-scoring-replication"
 version = "0.1.0"
-description = "Independent implementation scaffold for a published cost-sensitive scoring system."
+description = "Independent reconstruction of a published cost-sensitive fraud threshold example."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
