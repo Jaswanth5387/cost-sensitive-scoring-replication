@@ -1,79 +1,24 @@
-# Independent Implementation of a Published Cost-Sensitive Scoring System
+# Cost-Sensitive Fraud Threshold Reconstruction
 
-This repository is for a reproducibility artifact: choose a real engineering write-up about a production cost-sensitive or asymmetric-loss scoring system, implement the described scoring and decision policy, and compare measured numbers against the original claims.
+An independent reconstruction of the cost-sensitive decision example in Stripe's public guide, ["A primer on machine learning for fraud detection"](https://stripe.com/ae/guides/primer-on-machine-learning-for-fraud-protection).
 
-The important result is not whether the reconstruction matches perfectly. The result is the measured gap between the published claim and this independent implementation.
+This is not Stripe Radar. Stripe does not publish Radar's model, features, training data, or production threshold. This repo reconstructs the part Stripe does disclose: the economics that turn a fraud probability into a block/allow decision.
 
-## Artifact Contract
+## Result
 
-This repo is intended to satisfy:
+Stripe's arithmetic transfers exactly. The threshold does not.
 
-- Implementation, not paraphrase.
-- A cited source write-up with specific thresholds, cost structure, or before/after numbers.
-- A written claim-by-claim comparison with exact matched and diverged numbers.
-- Reproducible scripts, tests, configs, and seeds.
-- A release suitable for Zenodo DOI archiving.
-- A short note back to the original authors when the platform allows it.
+| Claim | Stripe | This repo | Status |
+| --- | ---: | ---: | --- |
+| Legitimate profit on `$26` sale at `8%` margin | `$2.08` | `$2.08` | matched |
+| Fraud loss with `$15` chargeback fee | `$38.92` | `$38.92` | matched |
+| Fraud-to-profit ratio | `18.71x` | `18.71x` | matched |
+| Break-even precision | `5.07%` | `5.07%` | matched |
+| Example block rule | `P(fraud) > 0.70` | cost optimum `0.04` | diverged |
 
-## Target
+Across five train/test seeds, the cost-optimal threshold mean is `0.108` with standard deviation `0.079`. The single-seed threshold sweep gives `0.04`.
 
-The current target is Stripe's public guide, ["A primer on machine learning for fraud detection"](https://stripe.com/ae/guides/primer-on-machine-learning-for-fraud-protection).
-
-This is not an implementation of Stripe Radar. It reconstructs the disclosed cost-sensitive decision framework and compares it against an independent fraud-scoring run.
-
-## Repository Layout
-
-| Path | Purpose |
-| --- | --- |
-| `src/cost_sensitive_scoring/` | Implementation package |
-| `tests/` | Unit tests for scoring and decision logic |
-| `docs/target_selection.md` | Candidate write-ups and selection rubric |
-| `reports/comparison.md` | Claim-by-claim replication report |
-| `experiments/` | Threshold sweep and cost sensitivity scripts |
-| `data/` | Local data staging; raw data is not committed unless license permits |
-| `results/` | Generated experiment outputs |
-
-## Quick Start
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-pytest
-```
-
-Download the real dataset:
-
-```bash
-python scripts/download_data.py
-```
-
-Run the experiments:
-
-```bash
-python experiments/threshold_sweep.py
-python experiments/sensitivity_analysis.py
-python experiments/multi_seed.py
-python experiments/plots.py
-```
-
-If `data/raw/creditcard.csv` exists, the scripts use it. Otherwise they run against a deterministic synthetic imbalanced dataset so the pipeline remains executable.
-
-## Replication Standard
-
-Each source claim must be recorded before running the corresponding experiment:
-
-| Claim ID | Original Claim | Source Location | Reproduction Metric | Our Number | Status |
-| --- | --- | --- | --- | --- | --- |
-| C1 | Legitimate profit from `$26` sale at `8%` margin | Stripe guide | arithmetic reproduction | `$2.08` | matched |
-| C2 | Fraud loss from product cost plus `$15` chargeback fee | Stripe guide | arithmetic reproduction | `$38.92` | matched |
-| C3 | Fraud-to-legitimate-profit ratio | Stripe guide | arithmetic reproduction | `18.71x` | matched |
-| C4 | Break-even precision | Stripe guide | arithmetic reproduction | `5.07%` | matched |
-| C5 | `P(fraud) > 0.7` block rule | Stripe guide | public dataset threshold sweep | `0.04` | diverged |
-
-The current result uses the Zenodo mirror of the European credit-card fraud dataset. The raw 150 MB CSV is not committed; see [data/README.md](data/README.md).
-
-Across five train/test seeds, the cost-optimal threshold mean is `0.108` with standard deviation `0.079`. The single-seed run used for the main threshold sweep gives `0.04`.
+The gap is the artifact: once the economics are attached to a real score distribution, the operating point depends on model calibration, class prevalence, feature quality, and merchant cost assumptions.
 
 ## Figures
 
@@ -81,24 +26,60 @@ Across five train/test seeds, the cost-optimal threshold mean is `0.108` with st
 
 ![Sensitivity heatmap](figures/sensitivity_heatmap.png)
 
-Status values:
+## Data
 
-- `matched`: Our number is within a pre-declared tolerance.
-- `diverged`: Our number is outside tolerance.
-- `not_reproducible`: The post omits a necessary detail.
-- `not_applicable`: The source claim depends on private scale, data, or infra that cannot be approximated honestly.
+The run uses the Zenodo mirror of the European credit-card fraud dataset:
 
-## Zenodo Release Checklist
+- Zenodo record: https://zenodo.org/records/7395559
+- DOI: `10.5281/zenodo.7395559`
+- File: `creditcard.csv`
+- MD5: `e90efcb83d69faf99fcab8b0255024de`
 
-- [ ] Select target write-up and cite exact URL.
-- [ ] Freeze data snapshot or document how to regenerate it.
-- [ ] Commit experiment configs and seeds.
-- [ ] Fill `reports/comparison.md`.
-- [ ] Create GitHub release.
-- [ ] Archive release on Zenodo.
-- [ ] Add DOI badge and citation metadata.
-- [ ] Submit note/comment/discussion to original blog if possible.
+The raw 150 MB CSV is not committed. See [data/README.md](data/README.md).
+
+## Reproduce
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+python scripts/download_data.py
+python experiments/threshold_sweep.py
+python experiments/sensitivity_analysis.py
+python experiments/multi_seed.py
+python experiments/plots.py
+pytest
+ruff check .
+```
+
+If `data/raw/creditcard.csv` is missing, the experiment scripts fall back to a deterministic synthetic imbalanced dataset. The checked-in result uses the real Zenodo CSV.
+
+## Files
+
+| Path | Purpose |
+| --- | --- |
+| `CLAIMS.md` | Source claims being tested |
+| `reports/comparison.md` | Main comparison report |
+| `src/cost_sensitive_scoring/` | Cost model, threshold evaluation, model training |
+| `experiments/` | Reproducible experiment scripts |
+| `results/` | Saved result CSVs and summary |
+| `figures/` | Generated plots |
+| `data/README.md` | Dataset source and checksum |
+
+## Current Limitations
+
+- Stripe's private data and production features are unavailable.
+- The public dataset is offline and historical, not a live payment stream.
+- The model family and calibration method are fixed.
+- The `0.70` value is Stripe's illustrative threshold, not a disclosed universal production optimum.
+
+## Next Release Steps
+
+- Create GitHub release `v0.1.0`.
+- Archive the release on Zenodo.
+- Add the Zenodo DOI to `CITATION.cff`.
+- Post the short comparison note drafted in [reports/comparison.md](reports/comparison.md), if Stripe's platform allows it.
 
 ## License
 
-Code is released under the MIT License. Data and reproduced source excerpts may have separate licensing constraints; see [LICENSE](LICENSE) and future dataset notes.
+MIT. Dataset rights are separate; see the Zenodo record and [data/README.md](data/README.md).
