@@ -61,9 +61,9 @@ Each source claim must be recorded before running the corresponding experiment:
 | C2 | Fraud loss from product cost plus `$15` chargeback fee | Stripe guide | arithmetic reproduction | `$38.92` | matched |
 | C3 | Fraud-to-legitimate-profit ratio | Stripe guide | arithmetic reproduction | `18.71x` | matched |
 | C4 | Break-even precision | Stripe guide | arithmetic reproduction | `5.07%` | matched |
-| C5 | `P(fraud) > 0.7` block rule | Stripe guide | synthetic fallback threshold sweep | `0.07` | diverged |
+| C5 | `P(fraud) > 0.7` block rule | Stripe guide | public dataset threshold sweep | `0.04` | diverged |
 
-The current checked-in result uses synthetic fallback data. Add `data/raw/creditcard.csv` to run the same pipeline on the European credit-card fraud dataset.
+The current result uses the Zenodo mirror of the European credit-card fraud dataset. The raw 150 MB CSV is not committed; see [data/README.md](data/README.md).
 
 Status values:
 
