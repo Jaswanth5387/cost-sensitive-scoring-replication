@@ -61,7 +61,7 @@ The divergence from `0.70` is stable in direction across seeds: even allowing fo
 - Feature mismatch: Stripe has proprietary payment, card, merchant, and network features.
 - Cost assumption mismatch: The current run uses Stripe's single merchant economics example.
 - Infrastructure mismatch: This is an offline reconstruction, not a real-time production hold system.
-- Randomness and seed variance: Current scripts use a fixed seed; multi-seed runs still need to be added.
+- Randomness and seed variance: Multi-seed runs are included, but the model family and calibration method are still fixed.
 
 ## Note to Original Authors
 
