@@ -37,6 +37,24 @@ On the public ULB/Zenodo credit-card fraud dataset, the independently cost-optim
 
 This is not evidence that Stripe's threshold is wrong. Stripe presents `0.70` as an example policy threshold, not as a universal optimum. The result does show the core artifact point: once the economics are wired into an actual score distribution, the operating point becomes a property of the model, calibration, data distribution, and merchant cost assumptions together.
 
+## Seed Variance
+
+| Metric | Mean | Std |
+| --- | ---: | ---: |
+| ROC AUC | 0.9751 | 0.0096 |
+| Average precision | 0.8229 | 0.0422 |
+| Best threshold | 0.1080 | 0.0785 |
+| Best total cost | 822.98 | 186.03 |
+| Precision at best threshold | 0.7420 | 0.0440 |
+| Recall at best threshold | 0.8439 | 0.0383 |
+
+The divergence from `0.70` is stable in direction across seeds: even allowing for threshold variance, the observed optimum remains far below Stripe's illustrative threshold.
+
+## Figures
+
+- `figures/threshold_cost.png`: cost curve with Stripe's `0.70` example and the observed optimum.
+- `figures/sensitivity_heatmap.png`: best threshold under alternate false-positive and false-negative costs.
+
 ## Threats to Validity
 
 - Data scale: Stripe uses private network-scale transaction data; the current run uses the public ULB/Zenodo credit-card fraud dataset.
@@ -48,3 +66,7 @@ This is not evidence that Stripe's threshold is wrong. Stripe presents `0.70` as
 ## Note to Original Authors
 
 Draft the short comment/discussion note here before posting.
+
+Draft:
+
+> I independently reconstructed the disclosed cost-sensitive economics in Stripe's fraud-detection primer using the public ULB/Zenodo credit-card fraud dataset. The arithmetic examples reproduce exactly: `$2.08` legitimate profit, `$38.92` fraud loss, `18.71x` fraud-to-profit ratio, and `5.07%` break-even precision. The decision threshold did not transfer: under my calibrated model and Stripe's example economics, the cost-optimal threshold was `0.04` in the main run and `0.108 ± 0.079` across five seeds, versus the article's illustrative `P(fraud) > 0.70` rule. I interpret this as evidence that the economics transfer cleanly but the operating threshold is inseparable from the score distribution, calibration, dataset, and production constraints.

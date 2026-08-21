@@ -42,11 +42,19 @@ pip install -e ".[dev]"
 pytest
 ```
 
-Run the placeholder experiment:
+Download the real dataset:
+
+```bash
+python scripts/download_data.py
+```
+
+Run the experiments:
 
 ```bash
 python experiments/threshold_sweep.py
 python experiments/sensitivity_analysis.py
+python experiments/multi_seed.py
+python experiments/plots.py
 ```
 
 If `data/raw/creditcard.csv` exists, the scripts use it. Otherwise they run against a deterministic synthetic imbalanced dataset so the pipeline remains executable.
@@ -64,6 +72,14 @@ Each source claim must be recorded before running the corresponding experiment:
 | C5 | `P(fraud) > 0.7` block rule | Stripe guide | public dataset threshold sweep | `0.04` | diverged |
 
 The current result uses the Zenodo mirror of the European credit-card fraud dataset. The raw 150 MB CSV is not committed; see [data/README.md](data/README.md).
+
+Across five train/test seeds, the cost-optimal threshold mean is `0.108` with standard deviation `0.079`. The single-seed run used for the main threshold sweep gives `0.04`.
+
+## Figures
+
+![Threshold vs cost](figures/threshold_cost.png)
+
+![Sensitivity heatmap](figures/sensitivity_heatmap.png)
 
 Status values:
 

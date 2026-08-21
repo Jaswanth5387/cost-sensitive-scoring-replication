@@ -16,3 +16,9 @@ Source used for the current run:
 - MD5: `e90efcb83d69faf99fcab8b0255024de`
 
 The same file is described as the European cardholder credit-card fraud dataset with 284,807 transactions and 492 frauds.
+
+To fetch and verify it:
+
+```bash
+python scripts/download_data.py
+```

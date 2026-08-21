@@ -23,3 +23,12 @@ Data: Zenodo `creditcard.csv`, MD5 `e90efcb83d69faf99fcab8b0255024de`
 | Minimum total cost | `$814.36` |
 
 The first divergence is large: on this public dataset and model, the cheapest threshold is much lower than Stripe's illustrative `0.70` example. This should not be read as a claim about Stripe Radar. It shows that the operating threshold is highly dependent on score calibration, class prevalence, feature quality, and merchant economics.
+
+## Multi-Seed Check
+
+| Metric | Mean | Std |
+| --- | ---: | ---: |
+| Best threshold | `0.1080` | `0.0785` |
+| Best total cost | `$822.98` | `$186.03` |
+| ROC AUC | `0.9751` | `0.0096` |
+| Average precision | `0.8229` | `0.0422` |
