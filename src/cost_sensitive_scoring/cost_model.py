@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import numpy as np
+
 
 @dataclass(frozen=True)
 class StripeEconomics:
@@ -28,3 +30,9 @@ class StripeEconomics:
     @property
     def break_even_precision(self) -> float:
         return 1 / (1 + self.fraud_to_legit_ratio)
+
+    def amount_scaled_false_positive_cost(self, amount: np.ndarray) -> np.ndarray:
+        return np.asarray(amount) * self.margin
+
+    def amount_scaled_false_negative_cost(self, amount: np.ndarray) -> np.ndarray:
+        return np.asarray(amount) * (1 - self.margin) + self.chargeback_fee

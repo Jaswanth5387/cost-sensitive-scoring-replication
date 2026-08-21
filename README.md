@@ -8,7 +8,7 @@ This is not Stripe Radar. Stripe does not publish Radar's model, features, train
 
 ## Result
 
-Stripe's arithmetic transfers exactly. The threshold does not.
+Stripe's arithmetic transfers exactly. The illustrative threshold is not cost-optimal in this reconstruction.
 
 | Claim | Stripe | This repo | Status |
 | --- | ---: | ---: | --- |
@@ -16,11 +16,12 @@ Stripe's arithmetic transfers exactly. The threshold does not.
 | Fraud loss with `$15` chargeback fee | `$38.92` | `$38.92` | matched |
 | Fraud-to-profit ratio | `18.71x` | `18.71x` | matched |
 | Break-even precision | `5.07%` | `5.07%` | matched |
-| Example block rule | `P(fraud) > 0.70` | cost optimum `0.04` | diverged |
+| Example block rule | illustrative `P(fraud) > 0.70` | evaluated against public data | tested |
+| Cost-optimal threshold | not published | `0.04` fixed cost, `0.33` amount-scaled | reconstruction result |
 
 Across five train/test seeds, the cost-optimal threshold mean is `0.108` with standard deviation `0.079`. The single-seed threshold sweep gives `0.04`.
 
-The claim that did not hold at this scale is the illustrative `P(fraud) > 0.70` block rule. On this public dataset, that rule cost `$1,768.04`; the observed cost optimum cost `$814.36`.
+The key result is narrow: Stripe does not claim `0.70` is a universal production optimum, but that illustrative operating point was not cost-optimal under this independent reconstruction. On this public dataset, the fixed-cost `0.70` policy cost `$1,768.04`; the observed fixed-cost optimum cost `$814.36`.
 
 | Policy | Blocked | False positives | False negatives | Cost | Cost vs optimum |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -30,6 +31,13 @@ The claim that did not hold at this scale is the illustrative `P(fraud) > 0.70` 
 | Cost optimum `0.04` | `140` | `36` | `19` | `$814.36` | `$0.00` |
 
 The gap is the artifact: once the economics are attached to a real score distribution, the operating point depends on model calibration, class prevalence, feature quality, and merchant cost assumptions. The calibration check has a Brier score of `0.000504`; the highest score bin averages `0.0154` predicted fraud probability against `0.0166` observed fraud rate, so the low threshold is not just an obvious calibration failure.
+
+The amount-scaled sanity check moves the optimum from `0.04` to `0.33`, while still below `0.70`. That makes the result more honest: the exact threshold is cost-model dependent, but the reconstructed operating point remains lower than Stripe's example policy.
+
+| Cost model | Optimal threshold | Cost at optimum | Cost at `0.70` |
+| --- | ---: | ---: | ---: |
+| Fixed Stripe example | `0.04` | `$814.36` | `$1,768.04` |
+| Amount-scaled reconstruction | `0.33` | `$3,167.77` | `$5,626.45` |
 
 ## Figures
 
@@ -80,6 +88,8 @@ If `data/raw/creditcard.csv` is missing, the experiment scripts fall back to a d
 | --- | --- |
 | `CLAIMS.md` | Source claims being tested |
 | `reports/comparison.md` | Main comparison report |
+| `reports/final_report.md` | Final research-style report |
+| `docs/cost-model.md` | Stripe-derived costs vs reconstruction assumptions |
 | `src/cost_sensitive_scoring/` | Cost model, threshold evaluation, model training |
 | `experiments/` | Reproducible experiment scripts |
 | `results/` | Saved result CSVs and summary |
@@ -92,6 +102,7 @@ If `data/raw/creditcard.csv` is missing, the experiment scripts fall back to a d
 - The public dataset is offline and historical, not a live payment stream.
 - The model family and calibration method are fixed.
 - The `0.70` value is Stripe's illustrative threshold, not a disclosed universal production optimum.
+- The main `0.04` threshold is a fixed-cost reconstruction result; amount-scaled costs move the optimum to `0.33`.
 
 ## Release
 

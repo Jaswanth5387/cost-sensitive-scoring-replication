@@ -16,7 +16,9 @@ State each claim as a number before running the reproduction.
 | C2 | Fraud loss equals product cost plus `$15` chargeback fee | Stripe guide economics example | Direct arithmetic | 38.92 | 38.92 | 0.00 | matched |
 | C3 | One fraud loss equals `18.71` legitimate profits | Stripe guide economics example | Direct arithmetic | 18.71 | 18.71 | 0.00 | matched |
 | C4 | Break-even precision is `5.07%` | Stripe guide economics example | Direct arithmetic | 5.07% | 5.07% | 0.00 pp | matched |
-| C5 | Block payments where `P(fraud) > 0.7` | Stripe illustrative policy example | Threshold sweep on Zenodo credit-card fraud data | 0.70 | 0.04 | -0.66 | diverged |
+| C5 | Illustrative block policy `P(fraud) > 0.7` | Stripe precision/recall example | Threshold sweep on Zenodo credit-card fraud data | 0.70 | evaluated | n/a | tested |
+| C6 | Cost-optimal threshold | Not published by Stripe | Fixed-cost reconstruction | n/a | 0.04 | n/a | reconstruction result |
+| C7 | Cost-optimal threshold under amount-scaled costs | Not published by Stripe | Amount-scaled reconstruction | n/a | 0.33 | n/a | sanity-check result |
 
 ## Implementation Notes
 
@@ -33,7 +35,7 @@ Inferred:
 
 ## Divergences
 
-On the public ULB/Zenodo credit-card fraud dataset, the independently cost-optimal threshold is `0.04`, far below Stripe's illustrative `0.70` rule. This is the first claim that does not transfer cleanly.
+On the public ULB/Zenodo credit-card fraud dataset, the independently cost-optimal fixed-cost threshold is `0.04`, far below Stripe's illustrative `0.70` rule. Under amount-scaled costs, the optimum moves to `0.33`.
 
 This is not evidence that Stripe's threshold is wrong. Stripe presents `0.70` as an example policy threshold, not as a universal optimum. The result does show the core artifact point: once the economics are wired into an actual score distribution, the operating point becomes a property of the model, calibration, data distribution, and merchant cost assumptions together.
 
@@ -47,6 +49,15 @@ This is not evidence that Stripe's threshold is wrong. Stripe presents `0.70` as
 | Cost optimum `0.04` | 140 | 36 | 19 | 814.36 | 0.00 |
 
 The `0.70` rule is much better than the naive baselines, but it leaves 45 fraudulent transactions unblocked in the held-out set. Lowering the threshold to `0.04` adds 28 false positives while preventing 26 additional false negatives. Under the Stripe example economics, those additional holds are worth it.
+
+## Cost Model Sanity Check
+
+| Cost model | Optimal threshold | Cost at optimum | Cost at `0.70` | Relative reduction vs `0.70` |
+| --- | ---: | ---: | ---: | ---: |
+| Fixed Stripe example | 0.04 | 814.36 | 1768.04 | 53.94% |
+| Amount-scaled reconstruction | 0.33 | 3167.77 | 5626.45 | 43.70% |
+
+The exact threshold is sensitive to cost interpretation. The broader direction remains stable: both reconstructed cost models choose a lower threshold than `0.70`.
 
 ## Calibration Check
 
@@ -69,13 +80,16 @@ The highest populated score bin is close to calibrated, so the failed threshold 
 | Precision at best threshold | 0.7420 | 0.0440 |
 | Recall at best threshold | 0.8439 | 0.0383 |
 
-The divergence from `0.70` is stable in direction across seeds: even allowing for threshold variance, the observed optimum remains far below Stripe's illustrative threshold.
+The divergence from `0.70` is stable in direction across seeds: even allowing for threshold variance, the observed fixed-cost optimum remains below Stripe's illustrative threshold.
 
 ## Figures
 
 - `figures/threshold_cost.png`: cost curve with Stripe's `0.70` example and the observed optimum.
 - `figures/sensitivity_heatmap.png`: best threshold under alternate false-positive and false-negative costs.
 - `figures/calibration.png`: predicted score bins versus observed fraud rates.
+- `results/cost_model_comparison.csv`: fixed-cost and amount-scaled cost comparison.
+- `results/confusion_matrices.csv`: confusion matrices at `0.04` and `0.70`.
+- `results/score_distribution.csv`: score distribution around the two thresholds.
 
 ## Threats to Validity
 
@@ -91,4 +105,4 @@ Draft the short comment/discussion note here before posting.
 
 Draft:
 
-> I independently reconstructed the disclosed cost-sensitive economics in Stripe's fraud-detection primer using the public ULB/Zenodo credit-card fraud dataset. The arithmetic examples reproduce exactly: `$2.08` legitimate profit, `$38.92` fraud loss, `18.71x` fraud-to-profit ratio, and `5.07%` break-even precision. The decision threshold did not transfer: under my calibrated model and Stripe's example economics, the cost-optimal threshold was `0.04` in the main run and `0.108 ± 0.079` across five seeds, versus the article's illustrative `P(fraud) > 0.70` rule. I interpret this as evidence that the economics transfer cleanly but the operating threshold is inseparable from the score distribution, calibration, dataset, and production constraints.
+> I independently reconstructed the disclosed cost-sensitive economics in Stripe's fraud-detection primer using the public ULB/Zenodo credit-card fraud dataset. The arithmetic examples reproduce exactly: `$2.08` legitimate profit, `$38.92` fraud loss, `18.71x` fraud-to-profit ratio, and `5.07%` break-even precision. I then evaluated the article's illustrative `P(fraud) > 0.70` policy under the reconstructed setup. Under fixed Stripe-example costs, the cost-optimal threshold was `0.04`; under amount-scaled costs, it moved to `0.33`. I do not interpret this as a claim about Stripe Radar's production threshold. The result is that the published economics transfer cleanly, while the operating point is inseparable from the score distribution, calibration, dataset, and cost interpretation.

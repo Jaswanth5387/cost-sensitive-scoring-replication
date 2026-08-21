@@ -1,0 +1,3 @@
+threshold,legit_at_or_above,fraud_at_or_above,legit_below,fraud_below
+0.04,36,104,71043,19
+0.7,8,78,71071,45

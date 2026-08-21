@@ -9,7 +9,15 @@
 - [x] Unit tests pass.
 - [x] Lint passes.
 - [x] Multi-seed variance reported.
+- [x] Stripe `0.70` wording corrected as illustrative threshold.
+- [x] Claim-evidence-reconstruction table added.
+- [x] Cost model assumptions documented.
+- [x] Fixed-cost versus amount-scaled sanity check reported.
+- [x] Confusion matrices and score distribution reported.
+- [x] Final report written.
 - [x] GitHub release created.
 - [x] Zenodo DOI minted.
 - [x] DOI added to `CITATION.cff`.
+- [ ] Final post-report GitHub release created.
+- [ ] Zenodo updated to final post-report release.
 - [ ] Note posted or submitted to original authors.

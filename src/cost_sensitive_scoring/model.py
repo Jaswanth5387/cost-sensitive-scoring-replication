@@ -32,6 +32,7 @@ def train_model(frame: pd.DataFrame, seed: int = 7) -> dict:
     scores = model.predict_proba(x_test)[:, 1]
     return {
         "model": model,
+        "x_test": x_test.reset_index(drop=True),
         "y_test": np.asarray(y_test),
         "scores": scores,
         "roc_auc": roc_auc_score(y_test, scores),

@@ -1,0 +1,5 @@
+threshold,action,actual_legit,actual_fraud
+0.04,allow,71043,19
+0.04,block,36,104
+0.7,allow,71071,45
+0.7,block,8,78

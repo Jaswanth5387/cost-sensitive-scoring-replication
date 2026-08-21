@@ -27,8 +27,10 @@ def policy_row(name: str, threshold: float, scored: pd.DataFrame) -> dict:
     }
 
 
-def always_allow_row(y_true: np.ndarray, false_negative_cost: float) -> dict:
+def always_allow_row(y_true: np.ndarray, false_negative_cost: float | np.ndarray) -> dict:
     fraud_count = int(np.sum(y_true == 1))
+    fraud = y_true == 1
+    fn_cost = np.broadcast_to(false_negative_cost, y_true.shape)
     return {
         "policy": "always_allow",
         "threshold": np.nan,
@@ -38,7 +40,7 @@ def always_allow_row(y_true: np.ndarray, false_negative_cost: float) -> dict:
         "true_positives": 0,
         "precision": 0.0,
         "recall": 0.0,
-        "total_cost": fraud_count * false_negative_cost,
+        "total_cost": float(np.sum(fn_cost[fraud])),
     }
 
 
@@ -54,6 +56,83 @@ def calibration_bins(y_true: np.ndarray, scores: np.ndarray, n_bins: int = 10) -
         )
         .reset_index(drop=True)
     )
+
+
+def score_distribution(y_true: np.ndarray, scores: np.ndarray) -> pd.DataFrame:
+    rows = []
+    for threshold in [0.04, 0.70]:
+        fraud = y_true == 1
+        above = scores >= threshold
+        rows.append(
+            {
+                "threshold": threshold,
+                "legit_at_or_above": int(np.sum(~fraud & above)),
+                "fraud_at_or_above": int(np.sum(fraud & above)),
+                "legit_below": int(np.sum(~fraud & ~above)),
+                "fraud_below": int(np.sum(fraud & ~above)),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def confusion_matrices(scored: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    for threshold in [0.04, 0.70]:
+        row = scored.loc[np.isclose(scored["threshold"], threshold)].iloc[0]
+        rows.extend(
+            [
+                {
+                    "threshold": threshold,
+                    "action": "allow",
+                    "actual_legit": int(row["true_negatives"]),
+                    "actual_fraud": int(row["false_negatives"]),
+                },
+                {
+                    "threshold": threshold,
+                    "action": "block",
+                    "actual_legit": int(row["false_positives"]),
+                    "actual_fraud": int(row["true_positives"]),
+                },
+            ]
+        )
+    return pd.DataFrame(rows)
+
+
+def compare_cost_models(economics: StripeEconomics, run: dict, thresholds: np.ndarray) -> pd.DataFrame:
+    amount = run["x_test"]["Amount"].to_numpy()
+    rows = []
+    variants = [
+        (
+            "fixed_stripe_example",
+            economics.legitimate_profit,
+            economics.fraud_loss,
+        ),
+        (
+            "amount_scaled",
+            economics.amount_scaled_false_positive_cost(amount),
+            economics.amount_scaled_false_negative_cost(amount),
+        ),
+    ]
+
+    for name, fp_cost, fn_cost in variants:
+        scored = score_thresholds(run["y_test"], run["scores"], thresholds, fp_cost, fn_cost)
+        best = best_threshold(scored)
+        stripe = scored.loc[np.isclose(scored["threshold"], 0.70)].iloc[0]
+        rows.append(
+            {
+                "cost_model": name,
+                "best_threshold": best["threshold"],
+                "best_total_cost": best["total_cost"],
+                "cost_at_0.70": stripe["total_cost"],
+                "cost_reduction_vs_0.70": stripe["total_cost"] - best["total_cost"],
+                "relative_cost_reduction_vs_0.70": (
+                    (stripe["total_cost"] - best["total_cost"]) / stripe["total_cost"]
+                ),
+                "precision_at_best": best["precision"],
+                "recall_at_best": best["recall"],
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def main() -> None:
@@ -82,13 +161,22 @@ def main() -> None:
 
     calibration = calibration_bins(run["y_test"], run["scores"])
     calibration["brier_score"] = brier_score_loss(run["y_test"], run["scores"])
+    distribution = score_distribution(run["y_test"], run["scores"])
+    matrices = confusion_matrices(scored)
+    cost_models = compare_cost_models(economics, run, thresholds)
 
     Path("results").mkdir(exist_ok=True)
     baseline.to_csv("results/policy_comparison.csv", index=False)
     calibration.to_csv("results/calibration_bins.csv", index=False)
+    distribution.to_csv("results/score_distribution.csv", index=False)
+    matrices.to_csv("results/confusion_matrices.csv", index=False)
+    cost_models.to_csv("results/cost_model_comparison.csv", index=False)
 
     print("policy_comparison=results/policy_comparison.csv")
     print("calibration_bins=results/calibration_bins.csv")
+    print("score_distribution=results/score_distribution.csv")
+    print("confusion_matrices=results/confusion_matrices.csv")
+    print("cost_model_comparison=results/cost_model_comparison.csv")
     print(f"brier_score={calibration['brier_score'].iloc[0]:.6f}")
 
 

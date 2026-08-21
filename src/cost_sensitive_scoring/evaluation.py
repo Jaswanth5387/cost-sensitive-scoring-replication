@@ -23,12 +23,14 @@ def score_thresholds(
     y_true: np.ndarray,
     y_score: np.ndarray,
     thresholds: np.ndarray,
-    false_positive_cost: float,
-    false_negative_cost: float,
+    false_positive_cost: float | np.ndarray,
+    false_negative_cost: float | np.ndarray,
 ) -> pd.DataFrame:
     rows = []
     y_true = np.asarray(y_true).astype(int)
     y_score = np.asarray(y_score)
+    fp_cost = np.broadcast_to(false_positive_cost, y_true.shape)
+    fn_cost = np.broadcast_to(false_negative_cost, y_true.shape)
 
     for threshold in thresholds:
         blocked = y_score >= threshold
@@ -42,7 +44,7 @@ def score_thresholds(
         precision = tp / (tp + fp) if tp + fp else 0.0
         recall = tp / (tp + fn) if tp + fn else 0.0
         fpr = fp / (fp + tn) if fp + tn else 0.0
-        total_cost = fp * false_positive_cost + fn * false_negative_cost
+        total_cost = float(np.sum(fp_cost[blocked & ~fraud]) + np.sum(fn_cost[~blocked & fraud]))
 
         rows.append(
             ThresholdMetrics(

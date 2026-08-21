@@ -45,6 +45,24 @@ The Stripe example threshold is precise but too conservative for this score dist
 
 The calibration curve is close in the highest populated score bin, which supports the main interpretation: the threshold gap is driven by the public score distribution and cost ratio, not only by a broken probability scale.
 
+## Cost Model Sanity Check
+
+| Cost model | Optimal threshold | Cost at optimum | Cost at `0.70` | Relative reduction |
+| --- | ---: | ---: | ---: | ---: |
+| Fixed Stripe example | `0.04` | `$814.36` | `$1,768.04` | `53.94%` |
+| Amount-scaled reconstruction | `0.33` | `$3,167.77` | `$5,626.45` | `43.70%` |
+
+The exact optimum is cost-model dependent. The amount-scaled reconstruction moves the threshold upward to `0.33`, but it remains below the illustrative `0.70` policy.
+
+## Confusion Matrices
+
+| Threshold | Action | Actual legitimate | Actual fraud |
+| ---: | --- | ---: | ---: |
+| `0.04` | allow | `71,043` | `19` |
+| `0.04` | block | `36` | `104` |
+| `0.70` | allow | `71,071` | `45` |
+| `0.70` | block | `8` | `78` |
+
 ## Multi-Seed Check
 
 | Metric | Mean | Std |

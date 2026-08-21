@@ -14,6 +14,8 @@ Includes:
 - Cost sensitivity analysis.
 - Policy baseline and error analysis.
 - Calibration check.
+- Fixed-cost versus amount-scaled cost sanity check.
+- Final research report.
 - Five-seed variance check.
 - Figures for threshold cost and cost sensitivity.
 - Draft note to the original source authors.
@@ -31,5 +33,6 @@ Main result:
 | Stripe example threshold cost | `$1,768.04` |
 | Cost-optimal threshold cost | `$814.36` |
 | Calibration Brier score | `0.000504` |
+| Amount-scaled cost-optimal threshold | `0.33` |
 
-The disclosed Stripe economics reproduce exactly, but the illustrative threshold does not transfer to this independent model and public dataset.
+The disclosed Stripe economics reproduce exactly. Stripe's illustrative threshold is not cost-optimal in this independent model and public dataset, but the result is not a claim about Stripe Radar's production threshold.
