@@ -18,6 +18,6 @@
 - [x] GitHub release created.
 - [x] Zenodo DOI minted.
 - [x] DOI added to `CITATION.cff`.
-- [ ] Final post-report GitHub release created.
-- [ ] Zenodo updated to final post-report release.
+- [x] Final post-report GitHub release created.
+- [x] Zenodo updated to final post-report release.
 - [ ] Note posted or submitted to original authors.

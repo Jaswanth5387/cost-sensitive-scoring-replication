@@ -1,6 +1,6 @@
 # Cost-Sensitive Fraud Threshold Reconstruction
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22043545.svg)](https://doi.org/10.5281/zenodo.22043545)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22044138.svg)](https://doi.org/10.5281/zenodo.22044138)
 
 An independent reconstruction of the cost-sensitive decision example in Stripe's public guide, ["A primer on machine learning for fraud detection"](https://stripe.com/ae/guides/primer-on-machine-learning-for-fraud-protection).
 
@@ -106,8 +106,8 @@ If `data/raw/creditcard.csv` is missing, the experiment scripts fall back to a d
 
 ## Release
 
-- GitHub release: [`v0.1.1`](https://github.com/Jaswanth5387/cost-sensitive-scoring-replication/releases/tag/v0.1.1)
-- Zenodo DOI: [`10.5281/zenodo.22043545`](https://doi.org/10.5281/zenodo.22043545)
+- GitHub release: [`v0.2.0`](https://github.com/Jaswanth5387/cost-sensitive-scoring-replication/releases/tag/v0.2.0)
+- Zenodo DOI: [`10.5281/zenodo.22044138`](https://doi.org/10.5281/zenodo.22044138)
 - Remaining outreach: post the short comparison note drafted in [reports/comparison.md](reports/comparison.md), if Stripe's platform allows it.
 
 ## License

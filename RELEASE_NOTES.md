@@ -1,10 +1,10 @@
 # Release Notes
 
-## v0.1.1
+## v0.2.0
 
-First reproducible artifact release.
+Final report release.
 
-DOI: https://doi.org/10.5281/zenodo.22043545
+DOI: https://doi.org/10.5281/zenodo.22044138
 
 Includes:
 
