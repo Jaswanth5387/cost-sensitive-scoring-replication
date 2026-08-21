@@ -1,12 +1,14 @@
 {
   "title": "Cost-Sensitive Fraud Threshold Reconstruction",
+  "upload_type": "software",
+  "access_right": "open",
   "description": "Independent reconstruction of the cost-sensitive decision example in Stripe's fraud-detection primer, using the public ULB/Zenodo credit-card fraud dataset.",
   "creators": [
     {
       "name": "jaswanth codex"
     }
   ],
-  "license": "mit-license",
+  "license": "MIT",
   "keywords": [
     "cost-sensitive learning",
     "fraud detection",

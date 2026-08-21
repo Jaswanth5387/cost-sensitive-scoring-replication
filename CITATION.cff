@@ -1,6 +1,6 @@
-cff-version: 1.2.0
+cff-version: "1.2.0"
 message: "If you use this artifact, please cite it using the metadata from this file."
-title: "Independent Implementation of a Published Cost-Sensitive Scoring System"
+title: "Cost-Sensitive Fraud Threshold Reconstruction"
 authors:
   - family-names: "codex"
     given-names: "jaswanth"
