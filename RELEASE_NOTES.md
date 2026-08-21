@@ -12,6 +12,8 @@ Includes:
 - Public ULB/Zenodo credit-card fraud dataset run.
 - Threshold sweep under Stripe's example cost model.
 - Cost sensitivity analysis.
+- Policy baseline and error analysis.
+- Calibration check.
 - Five-seed variance check.
 - Figures for threshold cost and cost sensitivity.
 - Draft note to the original source authors.
@@ -26,5 +28,8 @@ Main result:
 | Five-seed threshold std | `0.079` |
 | Main-run ROC AUC | `0.9874` |
 | Main-run average precision | `0.8378` |
+| Stripe example threshold cost | `$1,768.04` |
+| Cost-optimal threshold cost | `$814.36` |
+| Calibration Brier score | `0.000504` |
 
 The disclosed Stripe economics reproduce exactly, but the illustrative threshold does not transfer to this independent model and public dataset.

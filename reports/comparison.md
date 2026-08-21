@@ -37,6 +37,27 @@ On the public ULB/Zenodo credit-card fraud dataset, the independently cost-optim
 
 This is not evidence that Stripe's threshold is wrong. Stripe presents `0.70` as an example policy threshold, not as a universal optimum. The result does show the core artifact point: once the economics are wired into an actual score distribution, the operating point becomes a property of the model, calibration, data distribution, and merchant cost assumptions together.
 
+## Error Analysis
+
+| Policy | Blocked | False positives | False negatives | Cost | Cost vs optimum |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Always allow | 0 | 0 | 123 | 4787.16 | +3972.80 |
+| Always block | 71202 | 71079 | 0 | 147844.32 | +147029.96 |
+| Stripe example `0.70` | 86 | 8 | 45 | 1768.04 | +953.68 |
+| Cost optimum `0.04` | 140 | 36 | 19 | 814.36 | 0.00 |
+
+The `0.70` rule is much better than the naive baselines, but it leaves 45 fraudulent transactions unblocked in the held-out set. Lowering the threshold to `0.04` adds 28 false positives while preventing 26 additional false negatives. Under the Stripe example economics, those additional holds are worth it.
+
+## Calibration Check
+
+| Metric | Value |
+| --- | ---: |
+| Brier score | 0.000504 |
+| Highest-bin mean score | 0.0154 |
+| Highest-bin observed fraud rate | 0.0166 |
+
+The highest populated score bin is close to calibrated, so the failed threshold transfer is not explained away by a completely broken probability scale. It is mainly a decision-policy result: a high fraud-loss-to-profit ratio makes some low-probability holds economically rational.
+
 ## Seed Variance
 
 | Metric | Mean | Std |
@@ -54,6 +75,7 @@ The divergence from `0.70` is stable in direction across seeds: even allowing fo
 
 - `figures/threshold_cost.png`: cost curve with Stripe's `0.70` example and the observed optimum.
 - `figures/sensitivity_heatmap.png`: best threshold under alternate false-positive and false-negative costs.
+- `figures/calibration.png`: predicted score bins versus observed fraud rates.
 
 ## Threats to Validity
 

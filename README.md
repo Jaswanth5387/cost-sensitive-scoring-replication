@@ -20,13 +20,24 @@ Stripe's arithmetic transfers exactly. The threshold does not.
 
 Across five train/test seeds, the cost-optimal threshold mean is `0.108` with standard deviation `0.079`. The single-seed threshold sweep gives `0.04`.
 
-The gap is the artifact: once the economics are attached to a real score distribution, the operating point depends on model calibration, class prevalence, feature quality, and merchant cost assumptions.
+The claim that did not hold at this scale is the illustrative `P(fraud) > 0.70` block rule. On this public dataset, that rule cost `$1,768.04`; the observed cost optimum cost `$814.36`.
+
+| Policy | Blocked | False positives | False negatives | Cost | Cost vs optimum |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Always allow | `0` | `0` | `123` | `$4,787.16` | `+$3,972.80` |
+| Always block | `71,202` | `71,079` | `0` | `$147,844.32` | `+$147,029.96` |
+| Stripe example `0.70` | `86` | `8` | `45` | `$1,768.04` | `+$953.68` |
+| Cost optimum `0.04` | `140` | `36` | `19` | `$814.36` | `$0.00` |
+
+The gap is the artifact: once the economics are attached to a real score distribution, the operating point depends on model calibration, class prevalence, feature quality, and merchant cost assumptions. The calibration check has a Brier score of `0.000504`; the highest score bin averages `0.0154` predicted fraud probability against `0.0166` observed fraud rate, so the low threshold is not just an obvious calibration failure.
 
 ## Figures
 
 ![Threshold vs cost](figures/threshold_cost.png)
 
 ![Sensitivity heatmap](figures/sensitivity_heatmap.png)
+
+![Calibration check](figures/calibration.png)
 
 ## Data
 
@@ -47,6 +58,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 python scripts/download_data.py
 python experiments/threshold_sweep.py
+python experiments/error_analysis.py
 python experiments/sensitivity_analysis.py
 python experiments/multi_seed.py
 python experiments/plots.py

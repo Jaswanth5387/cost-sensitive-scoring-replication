@@ -44,12 +44,37 @@ def plot_sensitivity(results_dir: Path, figures_dir: Path) -> None:
     plt.close()
 
 
+def plot_calibration(results_dir: Path, figures_dir: Path) -> None:
+    frame = pd.read_csv(results_dir / "calibration_bins.csv")
+    upper = max(frame["mean_score"].max(), frame["observed_fraud_rate"].max()) * 1.2
+
+    plt.figure(figsize=(6, 6))
+    plt.plot([0, upper], [0, upper], color="0.6", linestyle="--", label="Perfect calibration")
+    plt.plot(
+        frame["mean_score"],
+        frame["observed_fraud_rate"],
+        marker="o",
+        linewidth=2,
+        label="Observed bins",
+    )
+    plt.xlabel("Mean predicted fraud probability")
+    plt.ylabel("Observed fraud rate")
+    plt.title("Calibration check")
+    plt.xlim(0, upper)
+    plt.ylim(0, upper)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(figures_dir / "calibration.png", dpi=180)
+    plt.close()
+
+
 def main() -> None:
     results_dir = Path("results")
     figures_dir = Path("figures")
     figures_dir.mkdir(exist_ok=True)
     plot_threshold_cost(results_dir, figures_dir)
     plot_sensitivity(results_dir, figures_dir)
+    plot_calibration(results_dir, figures_dir)
 
 
 if __name__ == "__main__":

@@ -24,6 +24,27 @@ Data: Zenodo `creditcard.csv`, MD5 `e90efcb83d69faf99fcab8b0255024de`
 
 The first divergence is large: on this public dataset and model, the cheapest threshold is much lower than Stripe's illustrative `0.70` example. This should not be read as a claim about Stripe Radar. It shows that the operating threshold is highly dependent on score calibration, class prevalence, feature quality, and merchant economics.
 
+## Policy Comparison
+
+| Policy | Blocked | False positives | False negatives | Cost | Cost vs optimum |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Always allow | `0` | `0` | `123` | `$4,787.16` | `+$3,972.80` |
+| Always block | `71,202` | `71,079` | `0` | `$147,844.32` | `+$147,029.96` |
+| Stripe example `0.70` | `86` | `8` | `45` | `$1,768.04` | `+$953.68` |
+| Cost optimum `0.04` | `140` | `36` | `19` | `$814.36` | `$0.00` |
+
+The Stripe example threshold is precise but too conservative for this score distribution under the example cost model. It avoids false positives, but the missed fraud dominates the cost.
+
+## Calibration Check
+
+| Metric | Value |
+| --- | ---: |
+| Brier score | `0.000504` |
+| Highest-bin mean score | `0.0154` |
+| Highest-bin observed fraud rate | `0.0166` |
+
+The calibration curve is close in the highest populated score bin, which supports the main interpretation: the threshold gap is driven by the public score distribution and cost ratio, not only by a broken probability scale.
+
 ## Multi-Seed Check
 
 | Metric | Mean | Std |
