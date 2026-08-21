@@ -15,11 +15,11 @@ This repo is intended to satisfy:
 - A release suitable for Zenodo DOI archiving.
 - A short note back to the original authors when the platform allows it.
 
-## Current Target Status
+## Target
 
-Target selection is still open. Candidate write-ups are tracked in [docs/target_selection.md](docs/target_selection.md).
+The current target is Stripe's public guide, ["A primer on machine learning for fraud detection"](https://stripe.com/ae/guides/primer-on-machine-learning-for-fraud-protection).
 
-The implementation scaffold currently includes a generic expected-value gate and cost matrix utilities in `src/cost_sensitive_scoring/`. Once the source write-up is selected, those generic pieces should be adapted to match the source system exactly.
+This is not an implementation of Stripe Radar. It reconstructs the disclosed cost-sensitive decision framework and compares it against an independent fraud-scoring run.
 
 ## Repository Layout
 
@@ -29,8 +29,9 @@ The implementation scaffold currently includes a generic expected-value gate and
 | `tests/` | Unit tests for scoring and decision logic |
 | `docs/target_selection.md` | Candidate write-ups and selection rubric |
 | `reports/comparison.md` | Claim-by-claim replication report |
+| `experiments/` | Threshold sweep and cost sensitivity scripts |
 | `data/` | Local data staging; raw data is not committed unless license permits |
-| `scripts/` | Reproducible experiment entry points |
+| `results/` | Generated experiment outputs |
 
 ## Quick Start
 
@@ -44,8 +45,11 @@ pytest
 Run the placeholder experiment:
 
 ```bash
-python scripts/run_expected_value_demo.py
+python experiments/threshold_sweep.py
+python experiments/sensitivity_analysis.py
 ```
+
+If `data/raw/creditcard.csv` exists, the scripts use it. Otherwise they run against a deterministic synthetic imbalanced dataset so the pipeline remains executable.
 
 ## Replication Standard
 
@@ -53,7 +57,13 @@ Each source claim must be recorded before running the corresponding experiment:
 
 | Claim ID | Original Claim | Source Location | Reproduction Metric | Our Number | Status |
 | --- | --- | --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD | TBD | pending |
+| C1 | Legitimate profit from `$26` sale at `8%` margin | Stripe guide | arithmetic reproduction | `$2.08` | matched |
+| C2 | Fraud loss from product cost plus `$15` chargeback fee | Stripe guide | arithmetic reproduction | `$38.92` | matched |
+| C3 | Fraud-to-legitimate-profit ratio | Stripe guide | arithmetic reproduction | `18.71x` | matched |
+| C4 | Break-even precision | Stripe guide | arithmetic reproduction | `5.07%` | matched |
+| C5 | `P(fraud) > 0.7` block rule | Stripe guide | synthetic fallback threshold sweep | `0.07` | diverged |
+
+The current checked-in result uses synthetic fallback data. Add `data/raw/creditcard.csv` to run the same pipeline on the European credit-card fraud dataset.
 
 Status values:
 
