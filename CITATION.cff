@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this artifact, please cite it using the metadata from this file."
+title: "Independent Implementation of a Published Cost-Sensitive Scoring System"
+authors:
+  - family-names: "codex"
+    given-names: "jaswanth"
+version: 0.1.0
+date-released: 2026-08-21
+license: MIT
+repository-code: "https://github.com/TBD/cost-sensitive-scoring-replication"
