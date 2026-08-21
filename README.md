@@ -1,5 +1,7 @@
 # Cost-Sensitive Fraud Threshold Reconstruction
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22043545.svg)](https://doi.org/10.5281/zenodo.22043545)
+
 An independent reconstruction of the cost-sensitive decision example in Stripe's public guide, ["A primer on machine learning for fraud detection"](https://stripe.com/ae/guides/primer-on-machine-learning-for-fraud-protection).
 
 This is not Stripe Radar. Stripe does not publish Radar's model, features, training data, or production threshold. This repo reconstructs the part Stripe does disclose: the economics that turn a fraud probability into a block/allow decision.
@@ -79,12 +81,11 @@ If `data/raw/creditcard.csv` is missing, the experiment scripts fall back to a d
 - The model family and calibration method are fixed.
 - The `0.70` value is Stripe's illustrative threshold, not a disclosed universal production optimum.
 
-## Next Release Steps
+## Release
 
-- Create GitHub release `v0.1.0`.
-- Archive the release on Zenodo.
-- Add the Zenodo DOI to `CITATION.cff`.
-- Post the short comparison note drafted in [reports/comparison.md](reports/comparison.md), if Stripe's platform allows it.
+- GitHub release: [`v0.1.1`](https://github.com/Jaswanth5387/cost-sensitive-scoring-replication/releases/tag/v0.1.1)
+- Zenodo DOI: [`10.5281/zenodo.22043545`](https://doi.org/10.5281/zenodo.22043545)
+- Remaining outreach: post the short comparison note drafted in [reports/comparison.md](reports/comparison.md), if Stripe's platform allows it.
 
 ## License
 
